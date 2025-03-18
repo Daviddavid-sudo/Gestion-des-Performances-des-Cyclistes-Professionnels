@@ -1,5 +1,5 @@
 import sqlite3
-
+from core.security import get_password_hash
 
 ## Creation of the database
 conn = sqlite3.connect('api.db') # Connexion to the db
@@ -19,7 +19,7 @@ conn.commit()
 
 conn.close()
 
-## Test to fill the database
+# Test to fill the database
 conn = sqlite3.connect('api.db')
 cursor = conn.cursor() 
 
@@ -29,3 +29,17 @@ cursor.execute(requete, ('Titi', 'tata', 'tata@mail.com', 'password', 'coach')) 
 
 conn.commit() 
 conn.close() 
+
+## Test to modify the db
+
+conn = sqlite3.connect('api.db')
+cursor = conn.cursor()
+
+password = get_password_hash('password')
+
+requete = """UPDATE users SET password = ? WHERE id = ?;""" 
+
+cursor.execute(requete, (password, 1))  # Paramètres passés en tuple
+
+conn.commit()
+conn.close()
