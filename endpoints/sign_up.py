@@ -1,6 +1,5 @@
 import sqlite3
 from core.security import get_password_hash
-from schemas.user import UserCreate
 from fastapi import APIRouter, HTTPException
 from models.models import insert_user, select_user
 
