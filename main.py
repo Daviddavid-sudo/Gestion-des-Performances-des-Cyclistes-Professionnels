@@ -1,3 +1,15 @@
-from fastapi import FASTAPI
+from fastapi import FastAPI
+from models.models import create_athlete_table, create_user_table, create_performance_table
 
-app = FASTAPI()
+
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    create_athlete_table(), create_performance_table(), create_user_table()
+
+# Lancer le serveur
+if __name__ == "__main__":
+    import uvicorn
+    print("Démarrage de l'API...")
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)

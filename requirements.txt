@@ -1,3 +1,8 @@
 fastapi
 streamlit
 passlib
+uvicorn
+dotenv
+jose
+jwt
+bcrypt
