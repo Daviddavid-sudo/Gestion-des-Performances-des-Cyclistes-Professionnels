@@ -7,6 +7,10 @@ router =APIRouter(prefix="/athlete", tags=["athlete"])
 
 @router.post("/create")
 async def register_user(athlete_id: int, age: int, weight: int, height: int, current_user=Depends(get_current_user)):
+    
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
     if select_athlete(athlete_id) != None:
         raise HTTPException(status_code=400, detail="Athlete already registered")
     
