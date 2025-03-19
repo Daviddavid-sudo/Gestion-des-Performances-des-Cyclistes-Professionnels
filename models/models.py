@@ -42,5 +42,17 @@ def create_performance_table():
     except:
         pass
 
+def insert_user(name, email, password, role):
+    c.execute("""INSERT INTO user(name, email, password, role) VALUES (?,?,?,?)""", (name, email, password, role))
+    conn.commit()
+    c.close()
+
+def select_user(email):
+    sql = "SELECT * FROM user WHERE email = ?"
+    recs = c.execute(sql, (email,))
+    recs=c.fetchone()
+    return recs
+
+
 # if __name__ == "__main__":
 #     create_user_table(), create_performance_table(), create_athlete_table()
