@@ -21,7 +21,8 @@ def create_athlete_table():
                   (athlete_id INTEGER PRIMARY KEY AUTOINCREMENT,
                   age INTEGER,
                   weight INTEGER,
-                  height INTEGER)""")
+                  height INTEGER,
+                  FOREIGN KEY (athlete_id) REFERENCES user (id))""")
     except:
         pass
 
@@ -46,11 +47,22 @@ def insert_user(name, email, password, role):
     c.close()
 
 def select_user(email):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
     sql = "SELECT * FROM user WHERE email = ?"
     recs = c.execute(sql, (email,))
     recs=c.fetchone()
     return recs
 
+def insert_athlete(athlete_id, age, weight, height):
+    c.execute("""INSERT INTO athlete(athlete_id, age, weight, height) VALUES (?,?,?,?)""", (athlete_id, age, weight, height))
+    conn.commit()
+    c.close()
 
+def select_athlete(athlete_id):
+    sql = "SELECT * FROM athlete WHERE athlete_id = ?"
+    recs = c.execute(sql, (athlete_id,))
+    recs=c.fetchone()
+    return recs
 # if __name__ == "__main__":
 #     create_user_table(), create_performance_table(), create_athlete_table()
