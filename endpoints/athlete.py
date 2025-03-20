@@ -1,6 +1,6 @@
 from core.security import get_password_hash
-from fastapi import APIRouter, HTTPException, Depends
-from models.models import insert_athlete, select_athlete, delete_athlete
+from fastapi import APIRouter, HTTPException, Depends, Request
+from models.models import insert_athlete, select_athlete, delete_athlete, modify_athlete
 from core.security import get_current_user
 
 router =APIRouter(prefix="/athlete", tags=["athlete"])
@@ -32,3 +32,12 @@ def deletion_athlete(athlete_id: int, current_user: dict = Depends(get_current_u
     delete_athlete(athlete_id=athlete_id)
     
     return {"message":"Athlete deleted successfully"}
+
+@router.put("/modify")
+async def modification_athlete(request: Request, data=dict, current_user: dict = Depends(get_current_user)):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    data = await request.json()
+    athlete_id = current_user.get('id')
+    
+    return modify_athlete(athlete_id=athlete_id, **data)
