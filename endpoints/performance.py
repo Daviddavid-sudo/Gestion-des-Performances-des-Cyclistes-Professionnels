@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.responses import JSONResponse
-from core.security import verify_password, create_access_token, get_password_hash, get_current_user, OAuth2PasswordBearer
-from models.models import select_user, select_performance, insert_performance, modify_performance, delete_performance, select_performance
+from core.security import get_current_user
+from models.models import select_performance, insert_performance, modify_performance, delete_performance, select_performance
 
 
 router =APIRouter(prefix="/performance", tags=["performance"])
@@ -26,6 +25,7 @@ def update_performance(performance_id: int, athlete_id: int,vo2max: int, hr: int
 
     modify_performance(performance_id=performance_id, athlete_id=athlete_id, vo2max=vo2max, hr=hr, rf=rf, cadence=cadence, ppo=ppo, completion_date=completion_date)
     return {"message":"Performance updated succesfully"}
+
 
 @router.post("/delete")
 def remove_performance(performance_id: int, current_user=Depends(get_current_user)):
