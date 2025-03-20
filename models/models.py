@@ -87,6 +87,17 @@ def select_performance(athlete_id):
     return recs 
 
 
+def select_all_performance():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    sql = "SELECT * FROM performance"
+    recs = c.execute(sql)
+    columns = [desc[0] for desc in c.description]
+    recs = [dict(zip(columns, row)) for row in c.fetchall()]
+    conn.close()
+    return recs 
+
+
 def select_avg_power():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
@@ -154,3 +165,14 @@ def delete_performance(performance_id):
     c.execute(sql, (performance_id,))
     conn.commit()
     c.close()
+
+
+def get_role(id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    sql = "SELECT role FROM user WHERE id = ?"
+    recs = c.execute(sql, (id,))
+    columns = [desc[0] for desc in c.description]
+    recs = [dict(zip(columns, row)) for row in c.fetchall()]
+    conn.close()
+    return recs 

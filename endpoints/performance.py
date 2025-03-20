@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from core.security import get_current_user
-from models.models import select_performance, insert_performance, modify_performance, delete_performance, select_performance
+from models.models import select_performance, insert_performance, modify_performance, delete_performance, select_performance, select_all_performance, get_role
 
 
 router =APIRouter(prefix="/performance", tags=["performance"])
@@ -37,9 +37,16 @@ def remove_performance(performance_id: int, current_user=Depends(get_current_use
 
 
 @router.get("/select")
-def history_performance(current_user=Depends(get_current_user)):
+def history_everyone_performance(current_user=Depends(get_current_user)):
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    athlete_id = current_user["id"]
-    recs = select_performance(athlete_id=athlete_id)
-    return {"performances": recs}
+    id = current_user["id"]
+    role = get_role(id=id)
+    print(role)
+    if role == "admin":
+        recs = select_all_performance()
+        return {"performances": recs}
+    else:
+        athlete_id = current_user["id"]
+        recs = select_performance(athlete_id=athlete_id)
+        return {"performances": recs}
