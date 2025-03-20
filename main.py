@@ -15,6 +15,12 @@ app.include_router(modification_user.router)
 
 @app.on_event("startup")
 def on_startup():
+    """
+    Initializes the application by creating necessary database tables.
+
+    This function is called at the startup of the application to ensure that
+    the database tables for athletes, performances, and users are created.
+    """
     create_athlete_table(), create_performance_table(), create_user_table()
 
 # Lancer le serveur
