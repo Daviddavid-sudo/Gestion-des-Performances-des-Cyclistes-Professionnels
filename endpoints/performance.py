@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from core.security import verify_password, create_access_token, get_password_hash, get_current_user, OAuth2PasswordBearer
-from models.models import select_user, select_performance, insert_performance, modify_performance, delete_performance
+from models.models import select_user, select_performance, insert_performance, modify_performance, delete_performance, select_performance
 
 
 router =APIRouter(prefix="/performance", tags=["performance"])
@@ -34,3 +34,12 @@ def remove_performance(performance_id: int, current_user=Depends(get_current_use
 
     delete_performance(performance_id=performance_id)
     return {"message":"Performance succesfully removed"}
+
+
+@router.get("/select")
+def history_performance(current_user=Depends(get_current_user)):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    athlete_id = current_user["id"]
+    recs = select_performance(athlete_id=athlete_id)
+    return {"performances": recs}

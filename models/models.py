@@ -81,9 +81,10 @@ def select_performance(athlete_id):
     c = conn.cursor()
     sql = "SELECT * FROM performance WHERE athlete_id = ?"
     recs = c.execute(sql, (athlete_id,))
-    recs=c.fetchone()
-    c.close()
-    return recs
+    columns = [desc[0] for desc in c.description]
+    recs = [dict(zip(columns, row)) for row in c.fetchall()]
+    conn.close()
+    return recs 
 
 
 def insert_performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date):
