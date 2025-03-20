@@ -42,6 +42,8 @@ def create_performance_table():
         pass
 
 def insert_user(name, email, password, role):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
     c.execute("""INSERT INTO user(name, email, password, role) VALUES (?,?,?,?)""", (name, email, password, role))
     conn.commit()
     c.close()
@@ -52,17 +54,23 @@ def select_user(email):
     sql = "SELECT * FROM user WHERE email = ?"
     recs = c.execute(sql, (email,))
     recs=c.fetchone()
+    c.close()
     return recs
 
 def insert_athlete(athlete_id, age, weight, height):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
     c.execute("""INSERT INTO athlete(athlete_id, age, weight, height) VALUES (?,?,?,?)""", (athlete_id, age, weight, height))
     conn.commit()
     c.close()
 
 def select_athlete(athlete_id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
     sql = "SELECT * FROM athlete WHERE athlete_id = ?"
     recs = c.execute(sql, (athlete_id,))
     recs=c.fetchone()
+    c.close()
     return recs
 # if __name__ == "__main__":
 #     create_user_table(), create_performance_table(), create_athlete_table()
