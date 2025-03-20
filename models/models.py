@@ -35,7 +35,7 @@ def create_performance_table():
                   hr INTEGER,
                   rf INTEGER,
                   cadence INTEGER,
-                  PPO INTEGER,
+                  ppo INTEGER,
                   completion_date str,
                   FOREIGN KEY (athlete_id) REFERENCES athlete (athlete_id))""")
     except:
