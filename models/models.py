@@ -92,3 +92,12 @@ def insert_performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date
     c.execute("""INSERT INTO performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date) VALUES (?,?,?,?,?,?,?)""", (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date))
     conn.commit()
     c.close()
+
+
+def modify_performance(performance_id, athlete_id, vo2max, hr, rf, cadence, ppo, completion_date):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    sql = """UPDATE performance SET athlete_id = ?, vo2max = ?, hr= ?, rf= ?, cadence= ?, ppo= ?, completion_date= ? WHERE performance_id = ?"""
+    c.execute(sql, (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date, performance_id))
+    conn.commit()
+    c.close()
