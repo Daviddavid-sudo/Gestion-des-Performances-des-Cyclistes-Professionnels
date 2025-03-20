@@ -52,26 +52,43 @@ def insert_user(name, email, password, role):
 def select_user(email):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     c = conn.cursor()
+
     sql = "SELECT * FROM user WHERE email = ?"
     recs = c.execute(sql, (email,))
     recs=c.fetchone()
     c.close()
     return recs
 
-
-def insert_performance(athlete_id,vo2max, hr, rf, cadence, ppo, commpletion_date):
-    conn = sqlite3.connect('database.db', check_same_thread=False)
+def insert_athlete(athlete_id, age, weight, height):
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute("""INSERT INTO performance(vo2max, hr, rf, cadence, ppo) VALUES (?,?,?,?,?,?,?)""", (athlete_id, vo2max, hr, rf, cadence, ppo, commpletion_date))
+    c.execute("""INSERT INTO athlete(athlete_id, age, weight, height) VALUES (?,?,?,?)""", (athlete_id, age, weight, height))
     conn.commit()
     c.close()
 
-
-def select_performance(performance_id):
-    conn = sqlite3.connect('database.db', check_same_thread=False)
+def select_athlete(athlete_id):
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    sql = "SELECT * FROM performance WHERE performance_id = ?"
-    recs = c.execute(sql, (performance_id,))
+    sql = "SELECT * FROM athlete WHERE athlete_id = ?"
+    recs = c.execute(sql, (athlete_id,))
     recs=c.fetchone()
     c.close()
     return recs
+
+
+def select_performance(athlete_id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    sql = "SELECT * FROM performance WHERE athlete_id = ?"
+    recs = c.execute(sql, (athlete_id,))
+    recs=c.fetchone()
+    c.close()
+    return recs
+
+
+def insert_performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute("""INSERT INTO performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date) VALUES (?,?,?,?,?,?,?)""", (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date))
+    conn.commit()
+    c.close()

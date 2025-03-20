@@ -33,5 +33,5 @@ async def register_user(vo2max: int, hr: int, rf: int, cadence: int, ppo: int, c
     if select_performance(athlete_id) != None:
         raise HTTPException(status_code=400, detail="Athlete already registered")
     
-    new_athlete=insert_performance(athlete_id=athlete_id, vo2max=vo2max, hr=hr, rf=rf, cadence=cadence, ppo=ppo, commpletion_date=completion_date)
-    return {"message":"Athlete registered succesfully", "athlete":new_athlete}
+    new_athlete=insert_performance(athlete_id=athlete_id, vo2max=vo2max, hr=hr, rf=rf, cadence=cadence, ppo=ppo, completion_date=completion_date)
+    return {"message":"Performance registered succesfully"}

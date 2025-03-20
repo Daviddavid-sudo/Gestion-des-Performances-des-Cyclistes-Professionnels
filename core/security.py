@@ -1,5 +1,7 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from core.config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 from fastapi import HTTPException, Depends, status
@@ -34,7 +36,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
         if user_data is None:
             raise HTTPException(status_code=401, detail="User not found")
-
 
         return {
             "id": user_data[0],
