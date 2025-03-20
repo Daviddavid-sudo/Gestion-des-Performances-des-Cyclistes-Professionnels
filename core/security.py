@@ -12,14 +12,44 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Verify if the provided plain password matches the hashed password.
+
+    Args:
+        plain_password (str): The plain text password to verify.
+        hashed_password (str): The hashed password to compare against.
+
+    Returns:
+        bool: True if the plain password matches the hashed password, False otherwise.
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
+    """
+    Hashes a given password using a predefined password hashing context.
+
+    Args:
+        password (str): The plain text password to be hashed.
+
+    Returns:
+        str: The hashed password.
+    """
     return pwd_context.hash(password)
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
+    """
+    Creates a JSON Web Token (JWT) for the given data with an optional expiration time.
+
+    Args:
+        data (dict): The data to encode into the token.
+        expires_delta (timedelta, optional): The time duration after which the token will expire. 
+                                             If not provided, a default expiration time is used.
+
+    Returns:
+        str: The encoded JWT as a string.
+    """
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)))
     to_encode.update({"exp": expire})
@@ -27,6 +57,18 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
+    """
+    Retrieve the current user based on the provided JWT token.
+
+    Args:
+        token (str): The JWT token provided by the user.
+
+    Returns:
+        dict: A dictionary containing user information such as id, name, email, hashed_password, and role.
+
+    Raises:
+        HTTPException: If the token is invalid, the user is not found, or credentials could not be validated.
+    """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
