@@ -86,6 +86,22 @@ def delete_athlete(athlete_id):
     finally:
         c.close()
 
+def modify_athlete(athlete_id, **kwargs):
+    conn = sqlite3.connect('database.db')
+    c =conn.cursor()
+
+    fields= ", ".join(f"{key} = ?" for key in kwargs.keys())
+    values = list(kwargs.values()) + [athlete_id]
+    sql = f"UPDATE athlete SET {fields} WHERE athlete_id = ?"
+
+    try:
+        c.execute(sql, values)
+        conn.commit()
+        return {"message": "Athlete updated successfully"}
+    except sqlite3.Error as e:
+        return {"error": str(e)}
+    finally:
+        c.close()
 
 # if __name__ == "__main__":
 #     create_user_table(), create_performance_table(), create_athlete_table()
