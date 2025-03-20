@@ -37,6 +37,7 @@ def deletion_athlete(athlete_id: int, current_user: dict = Depends(get_current_u
 async def modification_athlete(request: Request, data=dict, current_user: dict = Depends(get_current_user)):
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
+    
     data = await request.json()
     athlete_id = current_user.get('id')
     
