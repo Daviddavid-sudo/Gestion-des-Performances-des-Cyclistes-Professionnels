@@ -101,3 +101,11 @@ def modify_performance(performance_id, athlete_id, vo2max, hr, rf, cadence, ppo,
     c.execute(sql, (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date, performance_id))
     conn.commit()
     c.close()
+
+def delete_performance(performance_id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    sql = """DELETE FROM performance WHERE performance_id = ?"""
+    c.execute(sql, (performance_id,))
+    conn.commit()
+    c.close()
