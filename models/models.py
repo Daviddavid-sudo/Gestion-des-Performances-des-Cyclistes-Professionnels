@@ -15,6 +15,7 @@ def create_user_table():
     except:
         pass
 
+
 def create_athlete_table():
     try:
         c.execute("""CREATE TABLE IF NOT EXISTS athlete
@@ -25,6 +26,7 @@ def create_athlete_table():
                   FOREIGN KEY (athlete_id) REFERENCES user (id))""")
     except:
         pass
+
 
 def create_performance_table():
     try:
@@ -40,6 +42,7 @@ def create_performance_table():
                   FOREIGN KEY (athlete_id) REFERENCES athlete (athlete_id))""")
     except:
         pass
+
 
 def insert_user(name, email, password, role):
     conn = sqlite3.connect('database.db', check_same_thread=False)
@@ -59,12 +62,14 @@ def select_user(email):
     c.close()
     return recs
 
+
 def insert_athlete(athlete_id, age, weight, height):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("""INSERT INTO athlete(athlete_id, age, weight, height) VALUES (?,?,?,?)""", (athlete_id, age, weight, height))
     conn.commit()
     c.close()
+
 
 def select_athlete(athlete_id):
     conn = sqlite3.connect('database.db')
