@@ -6,3 +6,5 @@ dotenv
 jose
 jwt
 bcrypt
+python-jose
+email-validator
