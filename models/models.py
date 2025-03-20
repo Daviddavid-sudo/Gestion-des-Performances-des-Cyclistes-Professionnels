@@ -152,24 +152,35 @@ def select_all_performance():
 def select_avg_power():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute("SELECT athlete_id, avg(ppo) FROM performance ORDER BY ppo DESC")
+    c.execute("SELECT performance.athlete_id, user.name, user.email, avg(performance.ppo) FROM performance JOIN user ON performance.athlete_id = user.id ORDER BY ppo DESC")
     row = c.fetchone()
     conn.close()
     return {
         "athlete_id": row[0],
-        "average ppo": row[1]
+        "name": row[1],
+        "email": row[2],
+        "average ppo": row[3]
     } if row else {}
 
 
 def select_max_vo2():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute("SELECT performance.athlete_id, performance.vo2max FROM performance JOIN athlete ON performance.athlete_id = performance.athlete_id ORDER BY vo2max DESC")
+    c.execute("""SELECT performance.athlete_id, 
+    user.name,
+    user.email,
+    performance.vo2max 
+    FROM performance 
+    JOIN athlete ON performance.athlete_id = performance.athlete_id 
+    JOIN user ON athlete.athlete_id = user.id
+    ORDER BY vo2max DESC""")
     row = c.fetchone()
     conn.close()
     return {
         "athlete_id": row[0],
-        "vo2max": row[1]
+        "name": row[1],
+        "email": row[2],
+        "vo2max": row[3]
     } if row else {}
 
 
@@ -177,18 +188,25 @@ def select_max_weight_power_ratio():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("""
-                SELECT performance.athlete_id, athlete.weight, performance.ppo,
-                (performance.ppo / athlete.weight) AS power_ratio 
+                SELECT performance.athlete_id,                 
+                user.name,
+                user.email,
+                athlete.weight, 
+                performance.ppo,
+                (performance.ppo / athlete.weight) AS power_ratio
                 FROM performance 
                 JOIN athlete ON performance.athlete_id = athlete.athlete_id
+                JOIN user ON athlete.athlete_id = user.id
                 ORDER BY ppo/weight DESC""")
     row = c.fetchone()
     conn.close()
     return {
         "athlete_id": row[0],
-        "weight": row[1],
-        "ppo": row[2],
-        "power_ratio": row[3]
+        "name": row[1],
+        "email": row[2],
+        "weight": row[3],
+        "ppo": row[4],
+        "power_ratio": row[5]
     } if row else {}
 
 
