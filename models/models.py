@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('database.db')
+conn = sqlite3.connect('database.db', check_same_thread=False)
 c = conn.cursor()
 
 
@@ -21,7 +21,8 @@ def create_athlete_table():
                   (athlete_id INTEGER PRIMARY KEY AUTOINCREMENT,
                   age INTEGER,
                   weight INTEGER,
-                  height INTEGER)""")
+                  height INTEGER,
+                  FOREIGN KEY (athlete_id) REFERENCES user (id))""")
     except:
         pass
 
@@ -35,24 +36,42 @@ def create_performance_table():
                   rf INTEGER,
                   cadence INTEGER,
                   PPO INTEGER,
-                  P1 INTEGER,
-                  P2 INTEGER,
-                  P3 INTEGER,
+                  completion_date str,
                   FOREIGN KEY (athlete_id) REFERENCES athlete (athlete_id))""")
     except:
         pass
 
 def insert_user(name, email, password, role):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    c = conn.cursor()
     c.execute("""INSERT INTO user(name, email, password, role) VALUES (?,?,?,?)""", (name, email, password, role))
     conn.commit()
     c.close()
 
+
 def select_user(email):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    c = conn.cursor()
     sql = "SELECT * FROM user WHERE email = ?"
     recs = c.execute(sql, (email,))
     recs=c.fetchone()
+    c.close()
     return recs
 
 
-# if __name__ == "__main__":
-#     create_user_table(), create_performance_table(), create_athlete_table()
+def insert_performance(athlete_id,vo2max, hr, rf, cadence, ppo, commpletion_date):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    c = conn.cursor()
+    c.execute("""INSERT INTO performance(vo2max, hr, rf, cadence, ppo) VALUES (?,?,?,?,?,?,?)""", (athlete_id, vo2max, hr, rf, cadence, ppo, commpletion_date))
+    conn.commit()
+    c.close()
+
+
+def select_performance(performance_id):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    c = conn.cursor()
+    sql = "SELECT * FROM performance WHERE performance_id = ?"
+    recs = c.execute(sql, (performance_id,))
+    recs=c.fetchone()
+    c.close()
+    return recs
