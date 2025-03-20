@@ -72,5 +72,20 @@ def select_athlete(athlete_id):
     recs=c.fetchone()
     c.close()
     return recs
+
+def delete_athlete(athlete_id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    try:
+        sql = "DELETE FROM athlete WHERE athlete_id = ?"
+        c.execute(sql, (athlete_id,))
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print("Error Sqlite :", e)
+    finally:
+        c.close()
+
+
 # if __name__ == "__main__":
 #     create_user_table(), create_performance_table(), create_athlete_table()
