@@ -80,104 +80,53 @@ def select_athlete(athlete_id):
     c.close()
     return recs
 
-
-def select_performance(athlete_id):
+def delete_athlete(athlete_id):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    sql = "SELECT * FROM performance WHERE athlete_id = ?"
-    recs = c.execute(sql, (athlete_id,))
-    columns = [desc[0] for desc in c.description]
-    recs = [dict(zip(columns, row)) for row in c.fetchall()]
-    conn.close()
-    return recs 
 
+    try:
+        sql = "DELETE FROM athlete WHERE athlete_id = ?"
+        c.execute(sql, (athlete_id,))
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print("Error Sqlite :", e)
+    finally:
+        c.close()
 
-def select_all_performance():
+def modify_athlete(athlete_id, **kwargs):
     conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    sql = "SELECT * FROM performance"
-    recs = c.execute(sql)
-    columns = [desc[0] for desc in c.description]
-    recs = [dict(zip(columns, row)) for row in c.fetchall()]
-    conn.close()
-    return recs 
+    c =conn.cursor()
 
+    fields= ", ".join(f"{key} = ?" for key in kwargs.keys())
+    values = list(kwargs.values()) + [athlete_id]
+    sql = f"UPDATE athlete SET {fields} WHERE athlete_id = ?"
 
-def select_avg_power():
+    try:
+        c.execute(sql, values)
+        conn.commit()
+        return {"message": "Athlete updated successfully"}
+    except sqlite3.Error as e:
+        return {"error": str(e)}
+    finally:
+        c.close()
+
+def modify_user(id: int, **kwargs):
     conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("SELECT athlete_id, avg(ppo) FROM performance ORDER BY ppo DESC")
-    row = c.fetchone()
-    conn.close()
-    return {
-        "athlete_id": row[0],
-        "average ppo": row[1]
-    } if row else {}
+    c =conn.cursor()
 
+    fields= ", ".join(f"{key} = ?" for key in kwargs.keys())
+    values = list(kwargs.values()) + [id]
+    sql = f"UPDATE user SET {fields} WHERE id = ?"
 
-def select_max_vo2():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("SELECT performance.athlete_id, performance.vo2max FROM performance JOIN athlete ON performance.athlete_id = performance.athlete_id ORDER BY vo2max DESC")
-    row = c.fetchone()
-    conn.close()
-    return {
-        "athlete_id": row[0],
-        "vo2max": row[1]
-    } if row else {}
+    try:
+        c.execute(sql, values)
+        conn.commit()
+        return {"message": "user updated successfully"}
+    except sqlite3.Error as e:
+        return {"error": str(e)}
+    finally:
+        c.close()
+     
 
-
-def select_max_weight_power_ratio():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("""
-                SELECT performance.athlete_id, athlete.weight, performance.ppo,
-                (performance.ppo / athlete.weight) AS power_ratio 
-                FROM performance 
-                JOIN athlete ON performance.athlete_id = athlete.athlete_id
-                ORDER BY ppo/weight DESC""")
-    row = c.fetchone()
-    conn.close()
-    return {
-        "athlete_id": row[0],
-        "weight": row[1],
-        "ppo": row[2],
-        "power_ratio": row[3]
-    } if row else {}
-
-
-def insert_performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("""INSERT INTO performance(athlete_id, vo2max, hr, rf, cadence, ppo, completion_date) VALUES (?,?,?,?,?,?,?)""", (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date))
-    conn.commit()
-    c.close()
-
-
-def modify_performance(performance_id, athlete_id, vo2max, hr, rf, cadence, ppo, completion_date):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    sql = """UPDATE performance SET athlete_id = ?, vo2max = ?, hr= ?, rf= ?, cadence= ?, ppo= ?, completion_date= ? WHERE performance_id = ?"""
-    c.execute(sql, (athlete_id,vo2max, hr, rf, cadence, ppo, completion_date, performance_id))
-    conn.commit()
-    c.close()
-
-
-def delete_performance(performance_id):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    sql = """DELETE FROM performance WHERE performance_id = ?"""
-    c.execute(sql, (performance_id,))
-    conn.commit()
-    c.close()
-
-
-def get_role(id):
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    sql = "SELECT role FROM user WHERE id = ?"
-    recs = c.execute(sql, (id,))
-    columns = [desc[0] for desc in c.description]
-    recs = [dict(zip(columns, row)) for row in c.fetchall()]
-    conn.close()
-    return recs 
+# if __name__ == "__main__":
+#     create_user_table(), create_performance_table(), create_athlete_table()

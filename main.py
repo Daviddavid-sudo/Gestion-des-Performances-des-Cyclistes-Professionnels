@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from models.models import create_athlete_table, create_user_table, create_performance_table
 from endpoints import sign_up, connexion, performance, athlete, statistics
+from endpoints import sign_up, connexion, athlete, modification_user
 
 
 app = FastAPI()
@@ -10,6 +11,7 @@ app.include_router(connexion.router)
 app.include_router(performance.router)
 app.include_router(athlete.router)
 app.include_router(statistics.router)
+app.include_router(modification_user.router)
 
 @app.on_event("startup")
 def on_startup():
