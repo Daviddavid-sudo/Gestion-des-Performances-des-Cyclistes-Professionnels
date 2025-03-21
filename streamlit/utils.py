@@ -34,48 +34,51 @@ def fetch_data(endpoint):
     if response.status_code == 200:
         return response.json().get("performances", "No available datas")
     else:
-        return f"Error {response.status_code}: Error in fetch datas process."
+        return f"Error {response.status_code}: Impossible to get datas."
+
 
 
 def get_user_id_from_token():
+    """Get the user id by the token """
     token = st.session_state.get("token")
     if not token:
+        st.error("⚠️ No token found. Please log in.")
         return None
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_id = payload.get("sub")
-        return int(user_id)  
-    except jwt.ExpiredSignatureError:
-        st.error("Expired Session. Please reconnect.")
-        return None
-    except jwt.InvalidTokenError:
-        st.error("Invalid token.")
-        return None
+
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(f"{API_URL}/users/me", headers=headers)  # On demande l'ID au backend
     
+    if response.status_code == 200:
+        user_data = response.json()
+        user_id = user_data.get("id")  
+        print(f"get user id : {user_id}")  
+        return user_id
+    else:
+        st.error(f"❌ Error {response.status_code}: {response.text}")
+        return None
 
-def register_athlete(age:int, weight:int, height:int):
 
+def register_athlete(age: int, weight: int, height: int):
     if check_athlete_exists():
-        st.warning("An athlete profil already exist with this profil.")
+        st.warning("An athlete profile already exists.")
         return False
-    user_id = get_user_id_from_token()
+
+    user_id = get_user_id_from_token()  # On récupère l'ID utilisateur
     if not user_id:
-        st.error("Impossible to get user Id.")
+        st.error("Impossible to get user ID.")
         return False
-    
-    headers = {"Authorization": f"Bearer {st.session_state['token']}"}
-    athlete_id = get_user_id_from_token()
-    response = requests.post(f"{API_URL}/athlete/create?athlete_id={athlete_id}&age={age}&weight={weight}&height={height}", headers=headers)
+
+    headers = {"Authorization": f"Bearer {st.session_state.get('token')}"}
+    response = requests.post(f"{API_URL}/athlete/create?athlete_id={user_id}&age={age}&weight={weight}&height={height}", headers=headers)
+
     if response.status_code == 200:
         return True
     else:
         st.error(f"Erreur {response.status_code}: {response.text}")
         return False
 
-
-
 def check_athlete_exists():
-    """Check if an athlete exist or no"""
+    """Check if an athlete exists for the logged-in user"""
     
     user_id = get_user_id_from_token()
     if not user_id:
@@ -86,4 +89,4 @@ def check_athlete_exists():
 
     if response.status_code == 200:
         return True  # Athlete exists
-    return False  # Athele does not exist
+    return False  # Athlete does not exist

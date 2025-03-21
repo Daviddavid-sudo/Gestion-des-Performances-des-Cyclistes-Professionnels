@@ -21,6 +21,12 @@ if menu == "Login":
             st.success("You are connected !")
             st.session_state["authenticated"] = True
             st.session_state["token"] = user_data["access_token"]
+            # if "token" in st.session_state:
+            #     st.write("✅ Token récupéré avec succès")
+            #     st.write(st.session_state["token"])  # Vérifie ce qui est stocké
+            # else:
+            #     st.error("❌ Aucun token trouvé après connexion")
+
             st.switch_page("pages/home.py")  # Redirect to home page
 
 elif menu == "Sign up":
