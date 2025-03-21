@@ -10,7 +10,7 @@ async def login(email: str, password: str):
     user = select_user(email)
     if not user or not verify_password(password, get_password_hash(password)):
          raise HTTPException(status_code=400, detail="Invalid credentials")
-    access_token = create_access_token(data={"sub": email})
+    access_token = create_access_token(data={"sub": str(user[0])})
     return  {"email": email, "access_token": access_token}
 
     
