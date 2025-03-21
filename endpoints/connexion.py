@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
 from core.security import verify_password, create_access_token, get_password_hash
 from models.models import select_user
 
