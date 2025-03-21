@@ -106,7 +106,6 @@ def history_everyone_performance(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Authentication required")
     id = current_user["id"]
     role = get_role(id=id)
-    print(role)
     if role == "admin":
         recs = select_all_performance()
         return {"performances": recs}
