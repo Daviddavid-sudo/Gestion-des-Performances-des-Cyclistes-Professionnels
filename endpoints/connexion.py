@@ -7,6 +7,8 @@ router= APIRouter(tags=['login'])
 
 @router.post("/login")
 async def login(email: str, password: str):
+    """
+    Permet à un utilisateur de se connecter""" 
     user = select_user(email)
     if not user or not verify_password(password, get_password_hash(password)):
          raise HTTPException(status_code=400, detail="Invalid credentials")
